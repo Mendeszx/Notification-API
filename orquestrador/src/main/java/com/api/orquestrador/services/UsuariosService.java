@@ -24,7 +24,7 @@ public class UsuariosService {
     }
 
     @Transactional
-    public void cadastrarNovoUsuario(CadastroUsuarioRequest cadastroUsuarioRequest) {
+    public String cadastrarNovoUsuario(CadastroUsuarioRequest cadastroUsuarioRequest) {
 
         validarSeEmailExiste(cadastroUsuarioRequest.getEmail());
 
@@ -35,7 +35,7 @@ public class UsuariosService {
 
         usuariosEntity.setDataDeCadastro(dataDeCadastro);
 
-        usuariosRepository.save(usuariosEntity);
+        return usuariosRepository.save(usuariosEntity).getEmail();
     }
 
     private void validarSeEmailExiste(String email) {

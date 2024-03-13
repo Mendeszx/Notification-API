@@ -2,6 +2,8 @@ package com.api.orquestrador.services;
 
 import com.api.orquestrador.dtos.request.CadastroUsuarioRequest;
 import com.api.orquestrador.dtos.response.CadastroUsuarioResponse;
+import com.api.orquestrador.entities.UsuariosEntity;
+import com.api.orquestrador.producers.EmailProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +15,14 @@ public class CadastroService {
     @Autowired
     private UsuariosService usuariosService;
 
+    @Autowired
+    private QueueService queueService;
+
     public ResponseEntity<CadastroUsuarioResponse> cadastrarNovoUsuario(CadastroUsuarioRequest cadastroUsuarioRequest) {
         CadastroUsuarioResponse cadastroUsuarioResponse;
 
-        usuariosService.cadastrarNovoUsuario(cadastroUsuarioRequest);
+        String emailUsuariosEntity = usuariosService.cadastrarNovoUsuario(cadastroUsuarioRequest);
+        queueService.criarEventoEmailCadastroNaFila(emailUsuariosEntity);
         cadastroUsuarioResponse = criarCadastroUsuarioResponse(201, HttpStatus.CREATED, "Usuário cadastrado com sucesso.");
 
         return ResponseEntity.status(cadastroUsuarioResponse.getHttpStatusCode()).body(cadastroUsuarioResponse);
