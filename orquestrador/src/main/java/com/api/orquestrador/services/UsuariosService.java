@@ -1,6 +1,6 @@
 package com.api.orquestrador.services;
 
-import com.api.orquestrador.dtos.request.CadastroUsuarioRequest;
+import com.api.orquestrador.dtos.request.CriarUsuarioRequest;
 import com.api.orquestrador.entities.UsuariosEntity;
 import com.api.orquestrador.exceptions.EmailCadastradoException;
 import com.api.orquestrador.repository.UsuariosRepository;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UsuariosService {
@@ -19,17 +18,13 @@ public class UsuariosService {
     @Autowired
     UsuariosRepository usuariosRepository;
 
-    public Optional<UsuariosEntity> findByEmail(String email) {
-        return usuariosRepository.findByEmail(email);
-    }
-
     @Transactional
-    public String cadastrarNovoUsuario(CadastroUsuarioRequest cadastroUsuarioRequest) {
+    public String criarUsuario(CriarUsuarioRequest criarUsuarioRequest) {
 
-        validarSeEmailExiste(cadastroUsuarioRequest.getEmail());
+        validarSeEmailExisteParaCadastrar(criarUsuarioRequest.getEmail());
 
         UsuariosEntity usuariosEntity = new UsuariosEntity();
-        BeanUtils.copyProperties(cadastroUsuarioRequest, usuariosEntity);
+        BeanUtils.copyProperties(criarUsuarioRequest, usuariosEntity);
 
         Date dataDeCadastro = new Date();
 
@@ -38,11 +33,29 @@ public class UsuariosService {
         return usuariosRepository.save(usuariosEntity).getEmail();
     }
 
-    private void validarSeEmailExiste(String email) {
-        Optional<UsuariosEntity> usuariosEntity = findByEmail(email);
+    private void validarSeEmailExisteParaCadastrar(String email) {
+        Optional<UsuariosEntity> usuariosEntity = usuariosRepository.findByEmail(email);
 
         if (usuariosEntity.isPresent()) {
             throw new EmailCadastradoException("Email já cadastrado!");
         }
+    }
+
+    @Transactional
+    public String deletarUsuario(long usuarioId) {
+
+        UsuariosEntity usuariosEntity = validarSeUsuarioExisteParaDeletar(usuarioId);
+        usuariosRepository.delete(usuariosEntity);
+        return usuariosEntity.getEmail();
+    }
+
+    private UsuariosEntity validarSeUsuarioExisteParaDeletar(long id) {
+        Optional<UsuariosEntity> usuariosEntity = usuariosRepository.findById(id);
+
+        if (usuariosEntity.isEmpty()) {
+            throw new EmailCadastradoException("Usuario não cadastrado!");
+        }
+
+        return usuariosEntity.get();
     }
 }

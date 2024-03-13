@@ -1,9 +1,9 @@
 package com.api.orquestrador.services;
 
-import com.api.orquestrador.dtos.request.CadastroUsuarioRequest;
-import com.api.orquestrador.dtos.response.CadastroUsuarioResponse;
-import com.api.orquestrador.entities.UsuariosEntity;
-import com.api.orquestrador.producers.EmailProducer;
+import com.api.orquestrador.dtos.request.CriarUsuarioRequest;
+import com.api.orquestrador.dtos.response.CiarUsuarioResponse;
+import com.api.orquestrador.dtos.response.DeletarUsuarioResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,23 +18,45 @@ public class CadastroService {
     @Autowired
     private QueueService queueService;
 
-    public ResponseEntity<CadastroUsuarioResponse> cadastrarNovoUsuario(CadastroUsuarioRequest cadastroUsuarioRequest) {
-        CadastroUsuarioResponse cadastroUsuarioResponse;
+    @Transactional
+    public ResponseEntity<CiarUsuarioResponse> criarUsuario(CriarUsuarioRequest criarUsuarioRequest) {
+        CiarUsuarioResponse ciarUsuarioResponse;
 
-        String emailUsuariosEntity = usuariosService.cadastrarNovoUsuario(cadastroUsuarioRequest);
+        String emailUsuariosEntity = usuariosService.criarUsuario(criarUsuarioRequest);
         queueService.criarEventoEmailCadastroNaFila(emailUsuariosEntity);
-        cadastroUsuarioResponse = criarCadastroUsuarioResponse(201, HttpStatus.CREATED, "Usuário cadastrado com sucesso.");
+        ciarUsuarioResponse = criarCadastroUsuarioResponse(201, HttpStatus.CREATED, "Usuário cadastrado com sucesso.");
 
-        return ResponseEntity.status(cadastroUsuarioResponse.getHttpStatusCode()).body(cadastroUsuarioResponse);
+        return ResponseEntity.status(ciarUsuarioResponse.getHttpStatusCode()).body(ciarUsuarioResponse);
     }
 
-    private CadastroUsuarioResponse criarCadastroUsuarioResponse(int httpStatusCode, HttpStatus httpStatus, String mensagem) {
-        CadastroUsuarioResponse cadastroUsuarioResponse = new CadastroUsuarioResponse();
+    private CiarUsuarioResponse criarCadastroUsuarioResponse(int httpStatusCode, HttpStatus httpStatus, String mensagem) {
+        CiarUsuarioResponse ciarUsuarioResponse = new CiarUsuarioResponse();
 
-        cadastroUsuarioResponse.setHttpStatusCode(httpStatusCode);
-        cadastroUsuarioResponse.setHttpStatus(httpStatus);
-        cadastroUsuarioResponse.setMensagem(mensagem);
+        ciarUsuarioResponse.setHttpStatusCode(httpStatusCode);
+        ciarUsuarioResponse.setHttpStatus(httpStatus);
+        ciarUsuarioResponse.setMensagem(mensagem);
 
-        return cadastroUsuarioResponse;
+        return ciarUsuarioResponse;
+    }
+
+    @Transactional
+    public ResponseEntity<DeletarUsuarioResponse> deletarUsuario(long usuarioId) {
+        DeletarUsuarioResponse deletarUsuarioResponse;
+
+        String emailUsuariosEntity = usuariosService.deletarUsuario(usuarioId);
+        queueService.criarEventoEmailExclusaoNaFila(emailUsuariosEntity);
+        deletarUsuarioResponse = criarDeletarUsuarioResponse(200, HttpStatus.OK, "Usuário deletado com sucesso.");
+
+        return ResponseEntity.status(deletarUsuarioResponse.getHttpStatusCode()).body(deletarUsuarioResponse);
+    }
+
+    private DeletarUsuarioResponse criarDeletarUsuarioResponse(int httpStatusCode, HttpStatus httpStatus, String mensagem) {
+        DeletarUsuarioResponse deletarUsuarioResponse = new DeletarUsuarioResponse();
+
+        deletarUsuarioResponse.setHttpStatusCode(httpStatusCode);
+        deletarUsuarioResponse.setHttpStatus(httpStatus);
+        deletarUsuarioResponse.setMensagem(mensagem);
+
+        return deletarUsuarioResponse;
     }
 }

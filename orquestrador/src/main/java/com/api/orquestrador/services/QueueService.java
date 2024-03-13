@@ -15,4 +15,8 @@ public class QueueService {
     public void criarEventoEmailCadastroNaFila(String emailUsuariosEntity) {
         emailProducer.criarEventoEmailCadastroNaFila(emailUsuariosEntity);
     }
+
+    public void criarEventoEmailExclusaoNaFila(String emailUsuariosEntity) {
+        emailProducer.criarEventoEmailExclusaoNaFila(emailUsuariosEntity);
+    }
 }

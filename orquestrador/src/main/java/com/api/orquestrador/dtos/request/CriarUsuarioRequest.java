@@ -3,11 +3,9 @@ package com.api.orquestrador.dtos.request;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
-public class CadastroUsuarioRequest {
+public class CriarUsuarioRequest {
 
     @Valid
     private String nome;
