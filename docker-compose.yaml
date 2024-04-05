@@ -1,0 +1,95 @@
+version: '3.7'
+
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672" # Porta padrão do RabbitMQ
+      - "15672:15672" # Porta do plugin de gerenciamento (interface web)
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq # Volume para persistir os dados
+    environment:
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "admin"
+    networks:
+      - email-services-network
+      
+  db_producer:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_DB=db_producer
+      - POSTGRES_USER=producer
+      - POSTGRES_PASSWORD=producer
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - email-services-network
+
+  db_consumer:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_DB=db_consumer
+      - POSTGRES_USER=consumer
+      - POSTGRES_PASSWORD=consumer
+    volumes:
+      - postgres_consumer_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - email-services-network
+
+  producer:
+    build:
+      context: ./producer-email
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_producer:5432/db_producer
+      - SPRING_DATASOURCE_USERNAME=producer
+      - SPRING_DATASOURCE_PASSWORD=producer
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+    deploy:
+      replicas: 2
+    networks:
+      - email-services-network
+
+  consumer:
+    build:
+      context: ./consumer-email
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080" # Alterado para evitar conflito de porta
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_consumer:5432/db_consumer
+      - SPRING_DATASOURCE_USERNAME=consumer
+      - SPRING_DATASOURCE_PASSWORD=consumer
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+    deploy:
+      replicas: 4
+    networks:
+      - email-services-network
+
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - email-services-network
+
+volumes:
+  rabbitmq_data:
+    driver: local
+    
+networks:
+  email-services-network:
