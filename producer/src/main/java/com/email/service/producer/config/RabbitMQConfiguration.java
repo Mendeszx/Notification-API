@@ -1,5 +1,6 @@
 package com.email.service.producer.config;
 
+import com.email.service.producer.model.enumeration.Queues;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -13,7 +14,7 @@ public class RabbitMQConfiguration {
 
     @Bean
     public Queue criaFila(){
-        return new Queue ("enviar_email", false);
+        return new Queue (Queues.enviar_email.toString(), false);
     }
 
     @Bean
