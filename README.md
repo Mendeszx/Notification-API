@@ -1,13 +1,12 @@
 # email-web-service
 
-[Draw io](https://drive.google.com/uc?export=view&id=1fFboDbRxk26WCWr15TMBKoOsAr_0mcyL)
+Este projeto demonstra um ambiente de mensageria usando RabbitMQ para envio de emails juntamente com uma aplicação de produtor e consumidor, ambos em Java Spring Boot, além de um servidor Nginx para roteamento. Além disso, utiliza um banco de dados PostgreSQL para persistência dos dados.
 
-Este projeto demonstra um ambiente de mensageria usando RabbitMQ juntamente com uma aplicação de produtor e consumidor, ambos em Java Spring Boot, além de um servidor Nginx para roteamento. Além disso, utiliza um banco de dados PostgreSQL para persistência dos dados.
+<img src="https://media.discordapp.net/attachments/538485144106041394/1226017398339928085/email-web-service.png?ex=66233cae&is=6610c7ae&hm=8bb2226b2e06e2e4b40eb5174f6cb9fe26cc59ca16fdd14000ea2b8bbc04af26&=&format=webp&quality=lossless" alt="Texto Alternativo">
 
 ## Pré-requisitos
 
 - Docker
-- Docker Compose
 - Postman
 
 ## Instruções de Uso
