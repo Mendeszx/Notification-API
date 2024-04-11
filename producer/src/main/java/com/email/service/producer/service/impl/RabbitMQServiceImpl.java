@@ -18,8 +18,7 @@ public class RabbitMQServiceImpl implements RabbitMQService {
     public boolean enviarEmail(EnviarEmailRequestDTO enviarEmailRequestDTO) {
 
         try {
-            Message message = new Message(("teste").getBytes());
-            rabbitTemplate.send(Queues.enviar_email.toString(), message);
+            rabbitTemplate.convertAndSend("email.exchange", "", enviarEmailRequestDTO);
             return true;
         } catch (Exception e){
             e.printStackTrace();
