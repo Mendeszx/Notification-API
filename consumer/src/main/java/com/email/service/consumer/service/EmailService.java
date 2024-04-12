@@ -22,8 +22,9 @@ public class EmailService {
     private JavaMailSender emailSender;
 
     @Transactional
-    public EmailModel sendEmail(EmailModel emailModel) {
+    public void sendEmail(EmailModel emailModel) {
         emailModel.setSendDateEmail(LocalDateTime.now());
+
         try{
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(emailModel.getEmailFrom());
@@ -34,11 +35,13 @@ public class EmailService {
 
             emailModel.setStatusEmail(StatusEmail.SENT);
             System.out.println("Email enviado para " + emailModel.getEmailTo() + " com sucesso!");
+
         } catch (MailException e){
             emailModel.setStatusEmail(StatusEmail.ERROR);
             System.out.println("Erro ao enviar email para " + emailModel.getEmailTo());
+
         } finally {
-            return emailRepository.save(emailModel);
+            emailRepository.save(emailModel);
         }
     }
 }

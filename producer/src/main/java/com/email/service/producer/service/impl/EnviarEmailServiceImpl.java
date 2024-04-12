@@ -17,12 +17,19 @@ public class EnviarEmailServiceImpl implements EnviarEmailService {
     public ResponseEntity<EnviarEmailResponseDTO> enviarEmail(EnviarEmailRequestDTO enviarEmailRequestDTO) {
         EnviarEmailResponseDTO enviarEmailResponseDTO = new EnviarEmailResponseDTO();
 
-        if (rabbitMQService.enviarEmail(enviarEmailRequestDTO)){
+        try {
+            for (int i = 1; i <= enviarEmailRequestDTO.getQuantity(); i++) {
+                rabbitMQService.enviarEmail(enviarEmailRequestDTO);
+            }
+
             enviarEmailResponseDTO.setMensagem("Email enviado para fila com sucesso!");
             return ResponseEntity.ok().body(enviarEmailResponseDTO);
-        }
 
-        enviarEmailResponseDTO.setMensagem("Falha ao enviar email para fila!");
-        return ResponseEntity.internalServerError().body(enviarEmailResponseDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            enviarEmailResponseDTO.setMensagem("Falha ao enviar email para fila!");
+            return ResponseEntity.internalServerError().body(enviarEmailResponseDTO);
+        }
     }
 }

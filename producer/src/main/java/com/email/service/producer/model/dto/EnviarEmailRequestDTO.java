@@ -33,4 +33,8 @@ public class EnviarEmailRequestDTO {
     @NotBlank
     @NotNull
     private String text;
+
+    @NotBlank
+    @NotNull
+    private int quantity;
 }
