@@ -1,8 +1,8 @@
-# email-web-service
+# Notification-API
 
 Este projeto demonstra um ambiente de mensageria usando RabbitMQ para envio de emails juntamente com uma aplicação de produtor e consumidor, ambos em Java Spring Boot, além de um servidor Nginx para roteamento. Além disso, utiliza um banco de dados PostgreSQL para persistência dos dados.
 
-<img src="https://media.discordapp.net/attachments/538485144106041394/1226017398339928085/email-web-service.png?ex=66233cae&is=6610c7ae&hm=8bb2226b2e06e2e4b40eb5174f6cb9fe26cc59ca16fdd14000ea2b8bbc04af26&=&format=webp&quality=lossless" alt="Texto Alternativo">
+<img src="https://cdn.discordapp.com/attachments/538485144106041394/1240118710019031120/Notification-API.drawio.png?ex=6645660c&is=6644148c&hm=b9cd68485c4bcc84dff4e5bf85b00286a40bf7e0d3fcb41e305c775ffb268e16&">
 
 ## Pré-requisitos
 
